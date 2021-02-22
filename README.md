@@ -76,3 +76,18 @@ This is a very time consuming work, it may require user to analyze the dependenc
 But this work can automatable by tool. If we have a tool which can automatically do this, it will be very helpful.  
 ### Batch kernel arguments
 In C code, sometimes we find hotspot function inside deep loops. When wrap the hotspot to kernels, it need to batch kernel input and output data, use a large memory to pre-store data in host memory. 
+![batch kernel args](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/batch_kernel_args.png)
+![HLS development flow](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/HLS%20development%20flow.png)
+![coarse parallel 1](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/coarse%20parallel1.png)
+![coarse parallel 2](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/coarse%20parallel2.png)
+![coarse parallel 3](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/coarse%20parallel3.png)
+![coarse parallel 4](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/coarse%20parallel4.png)
+![coarse pipeline 1](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/coarse%20pipeline1.png)
+![coarse pipeline 2](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/coarse%20pipeline2.png)
+![coarse pipeline 3](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/coarse%20pipeline3.png)
+![coarse pipeline 4](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/coarse%20pipeline4.png)
+![coarse pipeline 5](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/coarse%20pipeline5.png)
+![merge small kernels](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/merge_small_kernels.png)
+![ping pong](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/ping%20pang.png)
+![split large kernel](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/split_large_kernels.png)
+
