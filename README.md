@@ -14,8 +14,8 @@ Start from a higher level language, faster compare to normal RTL development flo
 * Hard to find people know both HW and SW well.
 * Hard to get started, too much things in user guides.
 * Hard to describe all hardware behaviors based on C level.
-* Compare with RTL, easily to get 70% performance, but hard to improve further
-  -10% black box tuning to achieve 70% performance
+* Compare with RTL, easily to get 70% performance, but hard to improve further  
+  -10% black box tuning to achieve 70% performance  
   -60% black box tuning to achieve 90% performance
 * Auto generated RTL hard to control frequency & latency
 * General but inefficient RUNTIME make low E2E performance
