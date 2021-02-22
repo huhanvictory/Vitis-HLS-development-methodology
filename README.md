@@ -19,6 +19,7 @@ Start from a higher level language, faster compare to normal RTL development flo
   -60% black box tuning to achieve 90% performance
 * Auto generated RTL hard to control frequency & latency
 * General but inefficient RUNTIME make low E2E performance  
+
 ![HLS vs. RTL](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/RTL%20VS%20HLS.png)
   
 ![Project Timeline](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/project_timeline.png)
@@ -164,7 +165,7 @@ Long CPU idle time, in this case. the CPU is idle when FPGA is running:
 * Put more non-kernel independent CPU logic into this idle time
 
 Some times the C array is too large to apply to on-chip memory. In this case, we can split large kernel to several small kernels, and pipeline these kernels in host program.  
-Through global memory access is slower than on-chip memory access, but when pipeline these kernels, the performance will not drop that much.  
+Though global memory access is slower than on-chip memory access, but when pipeline these kernels, the performance will not drop that much.  
 
 ![coarse pipeline 4](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/coarse%20pipeline4.png)
 
