@@ -19,3 +19,5 @@ Start from a higher level language, faster compare to normal RTL development flo
   -60% black box tuning to achieve 90% performance
 * Auto generated RTL hard to control frequency & latency
 * General but inefficient RUNTIME make low E2E performance
+![HLS vs. RTL]https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/RTL%20VS%20HLS.png
+![Project Timeline]
