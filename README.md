@@ -21,3 +21,18 @@ Start from a higher level language, faster compare to normal RTL development flo
 * General but inefficient RUNTIME make low E2E performance  
 ![HLS vs. RTL](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/RTL%20VS%20HLS.png)
 ![Project Timeline](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/project_timeline.png)
+
+# Feasibility analysis
+## Select a device
+Select a device based on user's cost control. User need to know some basic FPGA information, including:
+* Advantage and disadvantage of FPGA
+* Price
+* Basic FPGA structure
+* Resource (LUT / FF / BRAM / DSP / URAM / SLR)
+* Global memory type (DDR, HBM, QPI, ...)
+* Data transfer Bandwidth (PCIe, DDR, ...)
+## Define a target performance based on parallelization
+* Define a target performance based on market requirement.
+* Profile hotspot of the source code.
+* Find possible compute parallelization in source code. Parallelization determine the upper bound of performance. Pipeline is necessary requirement to implement the upper bound.   
+![Performance Formula]()
