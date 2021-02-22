@@ -41,9 +41,9 @@ Select a device based on user's cost control. User need to know some basic FPGA 
 ![Performance Formula](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/performance_formula.png)
 
 * Give an estimation cycles of design:
-** Give a rough estimation of kernel cycles based on parallelization.
-** Add 10%~30% FPGA overhead for other logics and memory efficiency issue.
-** Add 10%~20% HOST-DEVICE communication overhead time.
+  * Give a rough estimation of kernel cycles based on parallelization.
+  * Add 10%~30% FPGA overhead for other logics and memory efficiency issue.
+  * Add 10%~20% HOST-DEVICE communication overhead time.
 
 # Feasibility analysis on the target performance based on FPGA resource
 User need to check if the target cycles is implementable in select device.  
