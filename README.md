@@ -20,7 +20,9 @@ Start from a higher level language, faster compare to normal RTL development flo
 * Auto generated RTL hard to control frequency & latency
 * General but inefficient RUNTIME make low E2E performance  
 ![HLS vs. RTL](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/RTL%20VS%20HLS.png)
+  
 ![Project Timeline](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/project_timeline.png)
+
 
 # Feasibility analysis
 ## Select a device
@@ -41,9 +43,10 @@ Select a device based on user's cost control. User need to know some basic FPGA 
 ** Give a rough estimation of kernel cycles based on parallelization.
 ** Add 10%~30% FPGA overhead for other logics and memory efficiency issue.
 ** Add 10%~20% HOST-DEVICE communication overhead time.
-#Feasibility analysis on the target performance based on FPGA resource
+
+# Feasibility analysis on the target performance based on FPGA resource
 User need to check if the target cycles is implementable in select device.  
-The bottleneck of a design always decided by two aspects: FPGA resource and memory bandwidth. Only both of the two aspects satisfied, the target performance is achievable.
+The bottleneck of a design always decided by two aspects: FPGA resource and memory bandwidth. Only both of the two aspects satisfied, the target performance is achievable.  
 
 * Pre-request knowledges
   * Basic computation resource usage for single operation
@@ -76,7 +79,9 @@ This is a very time consuming work, it may require user to analyze the dependenc
 But this work can automatable by tool. If we have a tool which can automatically do this, it will be very helpful.  
 ### Batch kernel arguments
 In C code, sometimes we find hotspot function inside deep loops. When wrap the hotspot to kernels, it need to batch kernel input and output data, use a large memory to pre-store data in host memory. 
+
 ![batch kernel args](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/batch_kernel_args.png)
+ 
 ### Merge small kernels
 If the glue logic in the middle of two adjacent kernels can move to other places or can merge to one of the kernels, then we can try to merge the adjacent kernels.  
 ![merge small kernels](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/merge_small_kernels.png)
@@ -98,11 +103,10 @@ We split the whole kernel optimization flow to 3 stages.
 * The first stage is optimization based on HLS estimation report. The target is the achieve 70% performance compare with RTL implementation. this stage iteration is relatively quick, because it only need to run estimate flow to tuning performance and run software emulation to verify the changes. We can solve most of the obvious issues in this stage.  
 * The second stage is based on hardware emulation waveform. In this stage, user need to check if hardware emulation cycles match with estimation cycles. Sometimes hardware emulation stuck even software emulation passed. In this stage we can try get smallest latency design. Also user can observe some action of global memory access, and solve some interface bandwidth compete issue. The hardware emulation is relatively slow.  
 * The third stage is the hardest one, because it is totally black box. User can only check the actual on board time to verify each small changes. After the first two stages, user almost get best performance and resource, we may find the actual P&R resource have huge gap with estimate resource. Currently we do not have many ways to control the P&R from C code, just try many times, and find the best configuration. After bitstream is ready, we need to do host optimization to improve E2E performance for the whole solution.  
-
 ## Principle
 Do not try to test the limitation and ability of the tool. Try to write simple enough code to let tool just make a role to do RTL translation.  
 
-Suggest Development Flow
+## Suggest Development Flow
 The first stage optimization can split to 4 parts: coarse-grain pipeline, coarse-grain parallel, fine-grain pipeline, fine-grain parallel.  
 Suggest do optimization from kernel level to function level,  from coarse-grain to fine-grain, from parallel to pipeline.  
 In coarse-grain level, user mainly focus on the mirco-architecture design.  
@@ -110,6 +114,7 @@ In fine-grain level, user mainly focus on the internal function and sub-function
 In code structure, parallel is always a sub-module of pipeline modules, but user always need always be cautioned for the resource usage when do parallel.  
 
 Here is the suggest development flow in this stage:  
+
 ![HLS development flow](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/HLS%20development%20flow.png)
 
 ## Coarse-grain parallel
@@ -119,13 +124,19 @@ After coarse-parallel, one kernel split to several cloned kernels, host can cont
 So do coarse-grain parallel, we need to make sure each kernel input and output interface are the same and totally independent.  
 
 ![coarse parallel 1](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/coarse%20parallel1.png)
+
 ![coarse parallel 2](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/coarse%20parallel2.png)
+
 ### Coarse-grain parallel on function level
 Sometimes, we find one complicate function inside one loop and and input/output independently between different iteration, we can do coarse-grain parallel on the loop. This operation will generate several resource the function in kernel, and these function resource can be executed in parallel.  
+
 ![coarse parallel 3](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/coarse%20parallel3.png)
+
 When adjacent functions are totally independent, tool will apply coarse-grain parallel on these functions.  
 Pingpang buffer are the good example coding style.  
+
 ![coarse parallel 4](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/coarse%20parallel4.png)
+
 ![ping pong](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/ping%20pang.png)
 
 ## Coarse-grain pipeline
@@ -133,8 +144,11 @@ Pingpang buffer are the good example coding style.
 Do coarse-grain pipeline on single kernel is in a loop, we want to HOST-DEVICE data transfer overlap with kernel execution.
 
 ![coarse pipeline 1](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/coarse%20pipeline1.png)
+
 We have two basic scenarios: long FPGA idle time, long CPU idle time.  
+
 ![coarse pipeline 2](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/coarse%20pipeline2.png)
+
 Long FPGA idle time, in this case, the FPGA is not fully utilized, we can:  
 * WR and RD including PCIe access and the glue logic in CPU(e.g. memcpy)
 * Add more logic to kernel
@@ -142,13 +156,16 @@ Long FPGA idle time, in this case, the FPGA is not fully utilized, we can:
   * Remove some unnecessary logic
   * Extend the single access length
   * Use more efficient XRT APIs, like SubBuffer or MapBuffer
+
 ![coarse pipeline 3](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/coarse%20pipeline3.png)
-Long CPU idle time, in this case. the CPU is idle when FPGA is running:
+
+Long CPU idle time, in this case. the CPU is idle when FPGA is running:  
 * Check kernel, if can apply more parallel or pipeline
 * Put more non-kernel independent CPU logic into this idle time
 
 Some times the C array is too large to apply to on-chip memory. In this case, we can split large kernel to several small kernels, and pipeline these kernels in host program.  
 Through global memory access is slower than on-chip memory access, but when pipeline these kernels, the performance will not drop that much.  
+
 ![coarse pipeline 4](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/coarse%20pipeline4.png)
 
 ### Coarse-grain pipeline on function level
@@ -161,17 +178,18 @@ In HLS, the coarse-grain pipeline mainly means DATAFLOW, we have several limitat
 * Do not design feedback streaming
 * Balance through of each pipeline stage in dataflow region
   * Downgrade performance for non-critical stage if have resource reduction
+
 ![coarse pipeline 5](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/coarse%20pipeline5.png)
 
 ## Fine-grain parallel
-Principle:  
+### Principle:  
 * Always target on innermost loops(cross function boundary)
 * Try to take all possible logic out of parallel loops
 * Control resource usage and timing, do not unroll too many nested loops
 * Solve data dependency and memory dependency to make parallel successful
 
 ## Fine-grain pipeline
-Principle:  
+### Principle:  
 * Target on innermost non-parallel loop
 * Can not nest pipeline loops
 * II not always require 1, depend on if this loop is bottleneck
@@ -179,14 +197,14 @@ Principle:
 
 # Optimize kernel based on waveform
 ## Principle
-Only care about the critical signals to improve efficiency. Try to do confidence changes to reduce iteration time.
+Only care about the critical signals to improve efficiency. Try to do confidence changes to reduce iteration time.  
 
 ## Save time
 After the first stage, we already have the best design based on HLS report. In this stage, we will further optimize the kernel by review the waveform of hardware emulation.  
 The hardware emulation need more time than software emulation, so we suggest to use small dataset to test to speed up debugging iteration.  
 
 ## Save signals
-When watch the waveform, we need to focus on some important ones in the thousands of signals, add too many signals will slow down the execution speed and increase the difficulty to find the real issue.
+When watch the waveform, we need to focus on some important ones in the thousands of signals, add too many signals will slow down the execution speed and increase the difficulty to find the real issue.  
 
 ## The import signals include:
 * "ap_"
@@ -198,13 +216,13 @@ The latency of each basic block may different with estimation report, if the dif
 
 # Optimize kernel based on bitstream
 ## Principle
-Try! Try! Try!
+Try! Try! Try!  
 
 ## Improve resource
-The estimation report of FPGA resource is not accurate, sometimes have huge difference compare with P&R report. Mostly estimate report resource usage is larger than P&R report. If the gap is useful to improve parallel or pipeline. We can further optimize the design.
+The estimation report of FPGA resource is not accurate, sometimes have huge difference compare with P&R report. Mostly estimate report resource usage is larger than P&R report. If the gap is useful to improve parallel or pipeline. We can further optimize the design.  
 
 ## Improve frequency
-When the design have huge fan-in or fan-out, it may cause bad frequency. We can check vivado.log to get the critical path of the design. The are several ways to optimize critical path:
+When the design have huge fan-in or fan-out, it may cause bad frequency. We can check vivado.log to get the critical path of the design. The are several ways to optimize critical path:  
 * Reduce the resource usage of the kernel.
 * If we find one kernel cross SLR, we can try to split the kernel or pull some logic out of kernel to avoid crossing.
 * Transfer fine-grain parallel to coarse-grain parallel, too much fine-grain parallel put too much logic into a small area, which may lead to bad frequency. Coarse-parallel use more resource in a large area, which is helpful for frequency.
