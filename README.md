@@ -35,4 +35,44 @@ Select a device based on user's cost control. User need to know some basic FPGA 
 * Define a target performance based on market requirement.
 * Profile hotspot of the source code.
 * Find possible compute parallelization in source code. Parallelization determine the upper bound of performance. Pipeline is necessary requirement to implement the upper bound.   
-![Performance Formula]()
+![Performance Formula](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/performance_formula.png)
+
+* Give an estimation cycles of design:
+** Give a rough estimation of kernel cycles based on parallelization.
+** Add 10%~30% FPGA overhead for other logics and memory efficiency issue.
+** Add 10%~20% HOST-DEVICE communication overhead time.
+#Feasibility analysis on the target performance based on FPGA resource
+User need to check if the target cycles is implementable in select device.  
+The bottleneck of a design always decided by two aspects: FPGA resource and memory bandwidth. Only both of the two aspects satisfied, the target performance is achievable.
+
+* Pre-request knowledges
+** Basic computation resource usage for single operation
+** Array partition
+** Design input and output bandwidth
+* DSP
+** DSP determines the computability of the kernel
+** Need to be care about the compute operation (+ - * / ...) in parallelization modules
+** User can build a table of how many the resource usage for each single operation. e.g. float*float=5 DSPs, int*int=2DSPs
+* BRAM/URAM
+** Almost all array implement as BRAMs / URAMs
+** Estimate RAM utilization for array size based on parallelization and partition
+* Bandwidth
+** Need to analyze all read/write access of global memory access, including non-reusable data and reusable data
+** PCIe bandwidth, for example, G3x16, in theory 16Gb/s, actual 12 GB/s in optimal
+** DDR bandwidth, for example, AXI 512bit * 300MHz = 19.2GB/s
+** HBM ...
+
+# How to get kernels
+## Principle
+* Profile for hotspot
+* Kernel have enough parallel and pipeline possibility
+* Less dependency with pre-kernel-logic and post-kernel-logic
+* As fewer kernels as possible. Too much kernels make the host kernel call complicate and inefficiently.
+* Suggest kernel interface no more than 5 array/pointers, too much interface will increase resource significantly and introduce access compete.
+* Don't make the resource usage of single kernel too large to cross SLR, this may impact the frequency.
+## Wrap Kernels
+Wrap kernels is not an easy work, it may need many code changes to make sure the correctness of functionality.  
+This is a very time consuming work, it may require user to analyze the dependency of the hotspot logic, and do many code transformation to resolve this.  
+But this work can automatable by tool. If we have a tool which can automatically do this, it will be very helpful.  
+### Batch kernel arguments
+In C code, sometimes we find hotspot function inside deep loops. When wrap the hotspot to kernels, it need to batch kernel input and output data, use a large memory to pre-store data in host memory. 
