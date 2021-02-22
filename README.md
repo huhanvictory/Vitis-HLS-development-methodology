@@ -46,21 +46,21 @@ User need to check if the target cycles is implementable in select device.
 The bottleneck of a design always decided by two aspects: FPGA resource and memory bandwidth. Only both of the two aspects satisfied, the target performance is achievable.
 
 * Pre-request knowledges
-** Basic computation resource usage for single operation
-** Array partition
-** Design input and output bandwidth
+  * Basic computation resource usage for single operation
+  * Array partition
+  * Design input and output bandwidth
 * DSP
-** DSP determines the computability of the kernel
-** Need to be care about the compute operation (+ - * / ...) in parallelization modules
-** User can build a table of how many the resource usage for each single operation. e.g. float*float=5 DSPs, int*int=2DSPs
+  * DSP determines the computability of the kernel
+  * Need to be care about the compute operation (+ - * / ...) in parallelization modules
+  * User can build a table of how many the resource usage for each single operation. e.g. float*float=5 DSPs, int*int=2DSPs
 * BRAM/URAM
-** Almost all array implement as BRAMs / URAMs
-** Estimate RAM utilization for array size based on parallelization and partition
+  * Almost all array implement as BRAMs / URAMs
+  * Estimate RAM utilization for array size based on parallelization and partition
 * Bandwidth
-** Need to analyze all read/write access of global memory access, including non-reusable data and reusable data
-** PCIe bandwidth, for example, G3x16, in theory 16Gb/s, actual 12 GB/s in optimal
-** DDR bandwidth, for example, AXI 512bit * 300MHz = 19.2GB/s
-** HBM ...
+  * Need to analyze all read/write access of global memory access, including non-reusable data and reusable data
+  * PCIe bandwidth, for example, G3x16, in theory 16Gb/s, actual 12 GB/s in optimal
+  * DDR bandwidth, for example, AXI 512bit * 300MHz = 19.2GB/s
+  * HBM ...
 
 # How to get kernels
 ## Principle
