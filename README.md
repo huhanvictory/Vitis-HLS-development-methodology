@@ -77,6 +77,31 @@ But this work can automatable by tool. If we have a tool which can automatically
 ### Batch kernel arguments
 In C code, sometimes we find hotspot function inside deep loops. When wrap the hotspot to kernels, it need to batch kernel input and output data, use a large memory to pre-store data in host memory. 
 ![batch kernel args](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/batch_kernel_args.png)
+### Merge small kernels
+If the glue logic in the middle of two adjacent kernels can move to other places or can merge to one of the kernels, then we can try to merge the adjacent kernels.  
+![merge small kernels](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/merge_small_kernels.png)
+### Split large kernel
+When we have large kernel which logic may cross die, we can split the large kernel to small kernels, and do kernel pipeline in the host program.  
+![split large kernel](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/split_large_kernels.png)
+### Interfaces
+Avoid complicate interface type, like struct/union/enum, try to use simple type, like 1d pointer/array, scalar.  
+If necessary, we can reduce interface number by kick some logic out of kernel, or transfer to local variable.  
+Avoid use global variable.  
+## Testing environment built up
+After extract kernels, we need to first make sure the correctness of the whole project.  
+HLS is easy to write C style test bench to build initial framework for kernel and host communication and verify the correctness.  
+User can write required cases to test different configurations of kernels.  
+
+# Optimize kernel based on HLS estimation report
+After kernel and related testing environment is ready, we can start to optimize kernels.  
+We split the whole kernel optimization flow to 3 stages.  
+The first stage is optimization based on HLS estimation report. The target is the achieve 70% performance compare with RTL implementation. this stage iteration is relatively quick, because it only need to run estimate flow to tuning performance and run software emulation to verify the changes. We can solve most of the obvious issues in this stage.  
+The second stage is based on hardware emulation waveform. In this stage, user need to check if hardware emulation cycles match with estimation cycles. Sometimes hardware emulation stuck even software emulation passed. In this stage we can try get smallest latency design. Also user can observe some action of global memory access, and solve some interface bandwidth compete issue. The hardware emulation is relatively slow.  
+The third stage is the hardest one, because it is totally black box. User can only check the actual on board time to verify each small changes. After the first two stages, user almost get best performance and resource, we may find the actual P&R resource have huge gap with estimate resource. Currently we do not have many ways to control the P&R from C code, just try many times, and find the best configuration. After bitstream is ready, we need to do host optimization to improve E2E performance for the whole solution.  
+
+## Principle
+Do not try to test the limitation and ability of the tool. Try to write simple enough code to let tool just make a role to do RTL translation.  
+
 ![HLS development flow](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/HLS%20development%20flow.png)
 ![coarse parallel 1](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/coarse%20parallel1.png)
 ![coarse parallel 2](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/coarse%20parallel2.png)
@@ -87,7 +112,7 @@ In C code, sometimes we find hotspot function inside deep loops. When wrap the h
 ![coarse pipeline 3](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/coarse%20pipeline3.png)
 ![coarse pipeline 4](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/coarse%20pipeline4.png)
 ![coarse pipeline 5](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/coarse%20pipeline5.png)
-![merge small kernels](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/merge_small_kernels.png)
+
 ![ping pong](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/ping%20pang.png)
-![split large kernel](https://github.com/huhanvictory/Vitis-HLS-development-methodology/blob/main/doc/split_large_kernels.png)
+
 
